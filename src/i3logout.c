@@ -47,15 +47,15 @@ gboolean parse(const char *key, const char *value, gpointer user_data,
 	g_print("key: %s, value: %s\n", key, value);
 	return TRUE;
 }
-//static GString config_path;
+
 static GOptionEntry entries[] = {
-		{ "config",						/* const gchar *long_name */
-		  'c',							/* gchar        short_name */
-		  0,							/* flags */
-		  G_OPTION_ARG_CALLBACK,		/* GOptionArg   arg */
-		  &parse,						/* gpointer     arg_data */
-		  "Path to config file",		/* const gchar *description */
-		  "PATH"						/* const gchar *arg_description */
+		{ "config",			/* const gchar *long_name 	*/
+		  'c',				/* gchar        short_name 	*/
+		  0,				/* flags 			*/
+		  G_OPTION_ARG_CALLBACK,	/* GOptionArg   arg 		*/
+		  &parse,			/* gpointer     arg_data 	*/
+		  "Path to config file",	/* const gchar *description 	*/
+		  "PATH"			/* const gchar *arg_description */
 		}
 };
 
