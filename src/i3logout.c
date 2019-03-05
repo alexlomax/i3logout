@@ -22,8 +22,8 @@ void lock_action(void) {
 	system("uname -a");
 }
 
-void logout_action(void) {
-	g_print("Logout\n");
+void logout_action() {
+	g_print("Logout");
 }
 
 void reboot_action(void) {
@@ -41,6 +41,23 @@ void hibernate_action(void) {
 void shutdown_action(void) {
 	g_print("Shutdown\n");
 }
+
+gboolean parse(const char *key, const char *value, gpointer user_data,
+		GError **error){
+	g_print("key: %s, value: %s\n", key, value);
+	return TRUE;
+}
+//static GString config_path;
+static GOptionEntry entries[] = {
+		{ "config",						/* const gchar *long_name */
+		  'c',							/* gchar        short_name */
+		  0,							/* flags */
+		  G_OPTION_ARG_CALLBACK,		/* GOptionArg   arg */
+		  &parse,						/* gpointer     arg_data */
+		  "Path to config file",		/* const gchar *description */
+		  "PATH"						/* const gchar *arg_description */
+		}
+};
 
 static void activate(GtkApplication *app, gpointer user_data) {
 	GtkWidget *window;
@@ -138,10 +155,24 @@ static void activate(GtkApplication *app, gpointer user_data) {
 
 int main(int argc, char **argv) {
 	GtkApplication *app;
+	GOptionContext *context;
+	GError *error = NULL;
 	int status;
 
 	app = gtk_application_new("com.yandex.alexlomax.i3logout",
 			G_APPLICATION_FLAGS_NONE);
+
+	/* Create custom command-line options */
+	context = g_option_context_new ("- simple i3 logout dialog written "
+			"in C and Gtk3");
+	g_option_context_add_main_entries (context, entries, NULL);
+	g_option_context_add_group (context, gtk_get_option_group (TRUE));
+	if (!g_option_context_parse (context, &argc, &argv, &error))
+	    {
+	      g_print ("option parsing failed: %s\n", error->message);
+	      exit (1);
+	    }
+
 	g_signal_connect(app, "activate", G_CALLBACK (activate), NULL);
 	status = g_application_run(G_APPLICATION(app), argc, argv);
 	g_object_unref(app);
