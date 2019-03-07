@@ -53,11 +53,28 @@ shutdown_action (void)
 {
   g_print ("Shutdown\n");
 }
-
+void
+create_config (FILE *config, const char *value)
+{
+  config = fopen (value, "w");
+  g_print ("Create config file\n");
+  fclose (config);
+}
 gboolean
 parse (const char *key, const char *value, gpointer user_data, GError **error)
 {
-  g_print ("key: %s, value: %s\n", key, value);
+  FILE *config = fopen (value, "r");
+  if (!config)
+    {
+      g_print ("Config file not found\n");
+      create_config (config, value);
+    }
+  else
+    {
+      g_print ("Close config\n");
+      fclose (config);
+    }
+
   return TRUE;
 }
 
