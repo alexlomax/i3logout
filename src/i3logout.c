@@ -16,7 +16,10 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <gtk/gtk.h>
+
+#define MAXLEN 100
 
 void
 lock_action (void)
@@ -25,7 +28,7 @@ lock_action (void)
 }
 
 void
-logout_action ()
+logout_action (void)
 {
   g_print ("Logout");
 }
@@ -53,27 +56,110 @@ shutdown_action (void)
 {
   g_print ("Shutdown\n");
 }
+
+struct config
+{
+  char lock_command[MAXLEN];
+  char logout_command[MAXLEN];
+  char reboot_command[MAXLEN];
+  char suspend_command[MAXLEN];
+  char hibernate_command[MAXLEN];
+  char shutdown_command[MAXLEN];
+};
+
 void
-create_config (FILE *config, const char *value)
+read_config (const char *value);
+
+void
+write_config (const char *value)
 {
-  config = fopen (value, "w");
-  g_print ("Create config file\n");
-  fclose (config);
+  /* Set default configuration file options */
+  struct config conf =
+    { .lock_command = "uname -a", .logout_command = "uname -a",
+	.reboot_command = "uname -a", .suspend_command = "uname -a",
+	.hibernate_command = "uname -a", .shutdown_command = "uname -a" };
+
+  FILE *file = fopen (value, "w");
+
+  fputs ("lock_command=", file);
+  fputs (conf.lock_command, file);
+  fputs ("\n", file);
+
+  fputs ("logout_command=", file);
+  fputs (conf.logout_command, file);
+  fputs ("\n", file);
+
+  fputs ("reboot_command=", file);
+  fputs (conf.reboot_command, file);
+  fputs ("\n", file);
+
+  fputs ("suspend_command=", file);
+  fputs (conf.suspend_command, file);
+  fputs ("\n", file);
+
+  fputs ("hibernate_command=", file);
+  fputs (conf.hibernate_command, file);
+  fputs ("\n", file);
+
+  fputs ("shutdown_command=", file);
+  fputs (conf.shutdown_command, file);
+
+  fclose (file);
+
+  read_config (value);
 }
-gboolean
-parse (const char *key, const char *value, gpointer user_data, GError **error)
+
+void
+read_config (const char *value)
 {
-  FILE *config = fopen (value, "r");
-  if (!config)
+  char str[MAXLEN];
+  int i = 0;
+  struct config conf;
+  FILE *file = fopen (value, "r");
+
+  if (!file)
     {
-      g_print ("Config file not found\n");
-      create_config (config, value);
+      g_print ("Configuration file not found\n");
+      write_config (value);
     }
   else
     {
-      g_print ("Close config\n");
-      fclose (config);
+
+      while (fgets (str, MAXLEN, file) != NULL)
+	{
+	  char *line;
+	  line = strstr (str, "=");
+	  line = line + strlen ("=");
+
+	  if (i == 0)
+	    strcpy (conf.lock_command, line);
+	  else if (i == 1)
+	    strcpy (conf.logout_command, line);
+	  else if (i == 2)
+	    strcpy (conf.reboot_command, line);
+	  else if (i == 3)
+	    strcpy (conf.suspend_command, line);
+	  else if (i == 4)
+	    strcpy (conf.hibernate_command, line);
+	  else if (i == 5)
+	    strcpy (conf.shutdown_command, line);
+	  i++;
+	}
+      fclose (file);
     }
+
+  printf ("%s", conf.lock_command);
+  printf ("%s", conf.logout_command);
+  printf ("%s", conf.reboot_command);
+  printf ("%s", conf.suspend_command);
+  printf ("%s", conf.hibernate_command);
+  printf ("%s", conf.shutdown_command);
+}
+
+gboolean
+parse (const char *key, const char *value, gpointer user_data, GError **error)
+{
+  read_config (value);
 
   return TRUE;
 }
