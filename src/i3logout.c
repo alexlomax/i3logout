@@ -20,41 +20,48 @@
 #include <gtk/gtk.h>
 
 #define MAXLEN 100
+#define DELIM "="
 
+/* TODO Create lock_action() */
 void
 lock_action (void)
 {
-  system ("uname -a");
+  system ("echo '* Debug: lock_action ()'");
 }
 
+/* TODO Create logout_action() */
 void
 logout_action (void)
 {
-  g_print ("Logout");
+  system ("echo '* Debug: logout_action ()'");
 }
 
+/* TODO Create reboot_action() */
 void
 reboot_action (void)
 {
-  g_print ("Reboot\n");
+  system ("echo '* Debug: reboot_action ()'");
 }
 
+/* TODO Create suspend_action() */
 void
 suspend_action (void)
 {
-  g_print ("Suspend\n");
+  system ("echo '* Debug: suspend_action()'");
 }
 
+/* TODO Create hibernate_action() */
 void
 hibernate_action (void)
 {
-  g_print ("Hibernate\n");
+  system ("echo '* Debug: hibernate_action ()'");
 }
 
+/* TODO Create shutdown_action() */
 void
 shutdown_action (void)
 {
-  g_print ("Shutdown\n");
+  system ("echo '* Debug: shutdown_action ()'");
 }
 
 struct config
@@ -67,17 +74,17 @@ struct config
   char shutdown_command[MAXLEN];
 };
 
-void
-read_config (const char *value);
+void read_config (const char *value);
 
 void
 write_config (const char *value)
 {
   /* Set default configuration file options */
   struct config conf =
-    { .lock_command = "uname -a", .logout_command = "uname -a",
-	.reboot_command = "uname -a", .suspend_command = "uname -a",
-	.hibernate_command = "uname -a", .shutdown_command = "uname -a" };
+    {.lock_command = "uname -a",.logout_command = "uname -a",
+    .reboot_command = "uname -a",.suspend_command = "uname -a",
+    .hibernate_command = "uname -a",.shutdown_command = "uname -a"
+  };
 
   FILE *file = fopen (value, "w");
 
@@ -119,7 +126,8 @@ read_config (const char *value)
 
   if (!file)
     {
-      g_print ("Configuration file not found\n");
+      /* File not found! */
+      perror (value);
       write_config (value);
     }
   else
@@ -128,8 +136,8 @@ read_config (const char *value)
       while (fgets (str, MAXLEN, file) != NULL)
 	{
 	  char *line;
-	  line = strstr (str, "=");
-	  line = line + strlen ("=");
+	  line = strstr (str, DELIM);
+	  line = line + strlen (DELIM);
 
 	  if (i == 0)
 	    strcpy (conf.lock_command, line);
@@ -148,16 +156,17 @@ read_config (const char *value)
       fclose (file);
     }
 
-  printf ("%s", conf.lock_command);
-  printf ("%s", conf.logout_command);
-  printf ("%s", conf.reboot_command);
-  printf ("%s", conf.suspend_command);
-  printf ("%s", conf.hibernate_command);
-  printf ("%s", conf.shutdown_command);
+  printf ("* Debug: lock_command: %s", conf.lock_command);
+  printf ("* Debug: logout_command: %s", conf.logout_command);
+  printf ("* Debug: reboot_command: %s", conf.reboot_command);
+  printf ("* Debug: suspend_command: %s", conf.suspend_command);
+  printf ("* Debug: hibernate_command: %s", conf.hibernate_command);
+  printf ("* Debug: shutdown_command: %s", conf.shutdown_command);
 }
 
 gboolean
-parse (const char *key, const char *value, gpointer user_data, GError **error)
+parse (const char *key, const char *value, gpointer user_data,
+       GError ** error)
 {
   read_config (value);
 
@@ -172,13 +181,13 @@ parse (const char *key, const char *value, gpointer user_data, GError **error)
  *  const gchar *description
  *  const gchar *arg_description
  */
-static GOptionEntry entries[] =
-  {
-    { "config", 'c', 0, G_OPTION_ARG_CALLBACK, &parse, "Path to config file",
-	"PATH" } };
+static GOptionEntry entries[] = {
+  {"config", 'c', 0, G_OPTION_ARG_CALLBACK, &parse, "Path to config file",
+   "PATH"}
+};
 
 static void
-activate (GtkApplication *app, gpointer user_data)
+activate (GtkApplication * app, gpointer user_data)
 {
   GtkWidget *window;
   GtkWidget *grid;
@@ -186,83 +195,83 @@ activate (GtkApplication *app, gpointer user_data)
 
   /* create a new window, and set its title */
   window = gtk_application_window_new (app);
-  gtk_window_set_title (GTK_WINDOW(window), "Choose action...");
-  gtk_container_set_border_width (GTK_CONTAINER(window), 10);
+  gtk_window_set_title (GTK_WINDOW (window), "Choose action...");
+  gtk_container_set_border_width (GTK_CONTAINER (window), 10);
 
   /* Here we construct the container that is going pack our buttons */
   grid = gtk_grid_new ();
 
   /* Pack the container in the window */
-  gtk_container_add (GTK_CONTAINER(window), grid);
+  gtk_container_add (GTK_CONTAINER (window), grid);
 
   button = gtk_button_new_from_icon_name ("system-lock-screen",
 					  GTK_ICON_SIZE_DIALOG);
   gtk_widget_set_tooltip_text (button, "Lock screen");
-  g_signal_connect(button, "clicked", G_CALLBACK (lock_action), NULL);
+  g_signal_connect (button, "clicked", G_CALLBACK (lock_action), NULL);
 
   /* Place the first button in the grid cell (0, 0), and make it fill
    * just 1 cell horizontally and vertically (ie no spanning)
    */
-  gtk_grid_attach (GTK_GRID(grid), button, 0, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 0, 1, 1);
 
   button = gtk_button_new_from_icon_name ("system-log-out",
 					  GTK_ICON_SIZE_DIALOG);
   gtk_widget_set_tooltip_text (button, "Logout");
-  g_signal_connect(button, "clicked", G_CALLBACK (logout_action), NULL);
+  g_signal_connect (button, "clicked", G_CALLBACK (logout_action), NULL);
 
   /* Place the second button in the grid cell (1, 0), and make it fill
    * just 1 cell horizontally and vertically (ie no spanning)
    */
-  gtk_grid_attach (GTK_GRID(grid), button, 1, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 1, 0, 1, 1);
 
   button = gtk_button_new_from_icon_name ("system-reboot",
 					  GTK_ICON_SIZE_DIALOG);
   gtk_widget_set_tooltip_text (button, "Reboot");
-  g_signal_connect(button, "clicked", G_CALLBACK (reboot_action), NULL);
+  g_signal_connect (button, "clicked", G_CALLBACK (reboot_action), NULL);
 
   /* Place the third button in the grid cell (2, 0), and make it fill
    * just 1 cell horizontally and vertically (ie no spanning)
    */
-  gtk_grid_attach (GTK_GRID(grid), button, 2, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 2, 0, 1, 1);
 
   button = gtk_button_new_from_icon_name ("system-suspend",
 					  GTK_ICON_SIZE_DIALOG);
   gtk_widget_set_tooltip_text (button, "Suspend");
-  g_signal_connect(button, "clicked", G_CALLBACK (suspend_action), NULL);
+  g_signal_connect (button, "clicked", G_CALLBACK (suspend_action), NULL);
 
   /* Place the fourth button in the grid cell (3, 0), and make it fill
    * just 1 cell horizontally and vertically (ie no spanning)
    */
-  gtk_grid_attach (GTK_GRID(grid), button, 3, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 3, 0, 1, 1);
 
   button = gtk_button_new_from_icon_name ("system-hibernate",
 					  GTK_ICON_SIZE_DIALOG);
   gtk_widget_set_tooltip_text (button, "Hibernate");
-  g_signal_connect(button, "clicked", G_CALLBACK (hibernate_action), NULL);
+  g_signal_connect (button, "clicked", G_CALLBACK (hibernate_action), NULL);
 
   /* Place the fifth button in the grid cell (4, 0), and make it fill
    * just 1 cell horizontally and vertically (ie no spanning)
    */
-  gtk_grid_attach (GTK_GRID(grid), button, 4, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 4, 0, 1, 1);
 
   button = gtk_button_new_from_icon_name ("system-shutdown",
 					  GTK_ICON_SIZE_DIALOG);
   gtk_widget_set_tooltip_text (button, "Shutdown");
-  g_signal_connect(button, "clicked", G_CALLBACK (shutdown_action), NULL);
+  g_signal_connect (button, "clicked", G_CALLBACK (shutdown_action), NULL);
 
   /* Place the sixth button in the grid cell (5, 0), and make it fill
    * just 1 cell horizontally and vertically (ie no spanning)
    */
-  gtk_grid_attach (GTK_GRID(grid), button, 5, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 5, 0, 1, 1);
 
   button = gtk_button_new_with_label ("Quit");
-  g_signal_connect_swapped(button, "clicked", G_CALLBACK (gtk_widget_destroy),
-			   window);
+  g_signal_connect_swapped (button, "clicked",
+			    G_CALLBACK (gtk_widget_destroy), window);
 
   /* Place the Quit button in the grid cell (5, 1), and make it
    * span 1 columns.
    */
-  gtk_grid_attach (GTK_GRID(grid), button, 5, 1, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 5, 1, 1, 1);
 
   /* Now that we are done packing our widgets, we show them all
    * in one go, by calling gtk_widget_show_all() on the window.
@@ -295,8 +304,8 @@ main (int argc, char **argv)
       exit (1);
     }
 
-  g_signal_connect(app, "activate", G_CALLBACK (activate), NULL);
-  status = g_application_run (G_APPLICATION(app), argc, argv);
+  g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
+  status = g_application_run (G_APPLICATION (app), argc, argv);
   g_object_unref (app);
 
   return status;
