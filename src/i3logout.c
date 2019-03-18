@@ -168,11 +168,13 @@ gboolean
 parse (const char *key, const char *value, gpointer user_data,
        GError ** error)
 {
+  printf ("* Debug: parse() %s, %s\n", key, value);
   read_config (value);
 
   return TRUE;
 }
 
+#if 0
 /*  const gchar *long_name
  *  gchar        short_name
  *  flags
@@ -184,6 +186,15 @@ parse (const char *key, const char *value, gpointer user_data,
 static GOptionEntry entries[] = {
   {"config", 'c', 0, G_OPTION_ARG_CALLBACK, &parse, "Path to config file",
    "PATH"}
+};
+#endif
+
+char *default_config_path = NULL;
+static GOptionEntry entries[] = {
+  {"config", 'c', 0, G_OPTION_ARG_FILENAME, &default_config_path,
+   "Path to config file",
+   "PATH"},
+  {NULL}
 };
 
 static void
@@ -288,6 +299,7 @@ main (int argc, char **argv)
   GtkApplication *app;
   GOptionContext *context;
   GError *error = NULL;
+  int arg_count = argc;		/* We copy argc because g_option_context_parse () modifies it */
   int status;
 
   app = gtk_application_new ("com.yandex.alexlomax.i3logout",
@@ -296,6 +308,7 @@ main (int argc, char **argv)
   /* Create custom command-line options */
   context = g_option_context_new ("- simple i3 logout dialog written "
 				  "in C and Gtk3");
+
   g_option_context_add_main_entries (context, entries, NULL);
   g_option_context_add_group (context, gtk_get_option_group (TRUE));
   if (!g_option_context_parse (context, &argc, &argv, &error))
@@ -303,6 +316,13 @@ main (int argc, char **argv)
       g_print ("option parsing failed: %s\n", error->message);
       exit (1);
     }
+  else if (arg_count < 3)
+    {				/* Set default config file path if the amount of args is too few */
+      default_config_path = getenv ("HOME");
+      strcat (default_config_path, "/.config/i3logout/config");
+    }
+
+  printf ("* Debug: main () default_config_path: %s\n", default_config_path);
 
   g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
   status = g_application_run (G_APPLICATION (app), argc, argv);
