@@ -19,6 +19,9 @@
 #include <string.h>
 #include <gtk/gtk.h>
 
+/* TODO Remove this temporary constant */
+#define COMMAND "uname -a"
+
 #define MAXLEN 100
 #define DELIM "="
 
@@ -80,10 +83,13 @@ void
 write_config (const char *value)
 {
   /* Set default configuration file options */
-  struct config conf =
-    {.lock_command = "uname -a",.logout_command = "uname -a",
-    .reboot_command = "uname -a",.suspend_command = "uname -a",
-    .hibernate_command = "uname -a",.shutdown_command = "uname -a"
+  struct config conf = {
+    .lock_command = COMMAND,
+    .logout_command = COMMAND,
+    .reboot_command = COMMAND,
+    .suspend_command = COMMAND,
+    .hibernate_command = COMMAND,
+    .shutdown_command = COMMAND
   };
 
   FILE *file = fopen (value, "w");
@@ -220,9 +226,8 @@ activate (GtkApplication * app, gpointer user_data)
   gtk_widget_set_tooltip_text (button, "Lock screen");
   g_signal_connect (button, "clicked", G_CALLBACK (lock_action), NULL);
 
-  /* Place the first button in the grid cell (0, 0), and make it fill
-   * just 1 cell horizontally and vertically (ie no spanning)
-   */
+  /* Place the first button in the grid cell (0, 0), and make it fill just 1
+     cell horizontally and vertically (ie no spanning) */
   gtk_grid_attach (GTK_GRID (grid), button, 0, 0, 1, 1);
 
   button = gtk_button_new_from_icon_name ("system-log-out",
@@ -230,9 +235,8 @@ activate (GtkApplication * app, gpointer user_data)
   gtk_widget_set_tooltip_text (button, "Logout");
   g_signal_connect (button, "clicked", G_CALLBACK (logout_action), NULL);
 
-  /* Place the second button in the grid cell (1, 0), and make it fill
-   * just 1 cell horizontally and vertically (ie no spanning)
-   */
+  /* Place the second button in the grid cell (1, 0), and make it fill just 1 
+     cell horizontally and vertically (ie no spanning) */
   gtk_grid_attach (GTK_GRID (grid), button, 1, 0, 1, 1);
 
   button = gtk_button_new_from_icon_name ("system-reboot",
@@ -240,9 +244,8 @@ activate (GtkApplication * app, gpointer user_data)
   gtk_widget_set_tooltip_text (button, "Reboot");
   g_signal_connect (button, "clicked", G_CALLBACK (reboot_action), NULL);
 
-  /* Place the third button in the grid cell (2, 0), and make it fill
-   * just 1 cell horizontally and vertically (ie no spanning)
-   */
+  /* Place the third button in the grid cell (2, 0), and make it fill just 1
+     cell horizontally and vertically (ie no spanning) */
   gtk_grid_attach (GTK_GRID (grid), button, 2, 0, 1, 1);
 
   button = gtk_button_new_from_icon_name ("system-suspend",
@@ -250,9 +253,8 @@ activate (GtkApplication * app, gpointer user_data)
   gtk_widget_set_tooltip_text (button, "Suspend");
   g_signal_connect (button, "clicked", G_CALLBACK (suspend_action), NULL);
 
-  /* Place the fourth button in the grid cell (3, 0), and make it fill
-   * just 1 cell horizontally and vertically (ie no spanning)
-   */
+  /* Place the fourth button in the grid cell (3, 0), and make it fill just 1 
+     cell horizontally and vertically (ie no spanning) */
   gtk_grid_attach (GTK_GRID (grid), button, 3, 0, 1, 1);
 
   button = gtk_button_new_from_icon_name ("system-hibernate",
@@ -260,9 +262,8 @@ activate (GtkApplication * app, gpointer user_data)
   gtk_widget_set_tooltip_text (button, "Hibernate");
   g_signal_connect (button, "clicked", G_CALLBACK (hibernate_action), NULL);
 
-  /* Place the fifth button in the grid cell (4, 0), and make it fill
-   * just 1 cell horizontally and vertically (ie no spanning)
-   */
+  /* Place the fifth button in the grid cell (4, 0), and make it fill just 1
+     cell horizontally and vertically (ie no spanning) */
   gtk_grid_attach (GTK_GRID (grid), button, 4, 0, 1, 1);
 
   button = gtk_button_new_from_icon_name ("system-shutdown",
@@ -270,25 +271,22 @@ activate (GtkApplication * app, gpointer user_data)
   gtk_widget_set_tooltip_text (button, "Shutdown");
   g_signal_connect (button, "clicked", G_CALLBACK (shutdown_action), NULL);
 
-  /* Place the sixth button in the grid cell (5, 0), and make it fill
-   * just 1 cell horizontally and vertically (ie no spanning)
-   */
+  /* Place the sixth button in the grid cell (5, 0), and make it fill just 1
+     cell horizontally and vertically (ie no spanning) */
   gtk_grid_attach (GTK_GRID (grid), button, 5, 0, 1, 1);
 
   button = gtk_button_new_with_label ("Quit");
   g_signal_connect_swapped (button, "clicked",
 			    G_CALLBACK (gtk_widget_destroy), window);
 
-  /* Place the Quit button in the grid cell (5, 1), and make it
-   * span 1 columns.
-   */
+  /* Place the Quit button in the grid cell (5, 1), and make it span 1
+     columns. */
   gtk_grid_attach (GTK_GRID (grid), button, 5, 1, 1, 1);
 
-  /* Now that we are done packing our widgets, we show them all
-   * in one go, by calling gtk_widget_show_all() on the window.
-   * This call recursively calls gtk_widget_show() on all widgets
-   * that are contained in the window, directly or indirectly.
-   */
+  /* Now that we are done packing our widgets, we show them all in one go, by 
+     calling gtk_widget_show_all() on the window. This call recursively calls 
+     gtk_widget_show() on all widgets that are contained in the window,
+     directly or indirectly. */
   gtk_widget_show_all (window);
 
 }
@@ -296,11 +294,13 @@ activate (GtkApplication * app, gpointer user_data)
 int
 main (int argc, char **argv)
 {
+  char *path = NULL;
   GtkApplication *app;
   GOptionContext *context;
   GError *error = NULL;
-  int arg_count = argc;		/* We copy argc because g_option_context_parse () modifies it */
   int status;
+  int arg_count = argc;		/* We copy argc because
+				   g_option_context_parse () modifies it */
 
   app = gtk_application_new ("com.yandex.alexlomax.i3logout",
 			     G_APPLICATION_FLAGS_NONE);
@@ -317,12 +317,19 @@ main (int argc, char **argv)
       exit (1);
     }
   else if (arg_count < 3)
-    {				/* Set default config file path if the amount of args is too few */
-      default_config_path = getenv ("HOME");
-      strcat (default_config_path, "/.config/i3logout/config");
+    {				/* Set default config file path if the amount 
+				   of args is too few */
+      path = getenv ("HOME");
+      if (path != NULL)
+	strcat (path, "/.config/i3logout/config");
+      else
+	{
+	  perror ("getenv");
+	  exit (1);
+	}
     }
 
-  printf ("* Debug: main () default_config_path: %s\n", default_config_path);
+  printf ("* Debug: main () path: %s\n", path);
 
   g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
   status = g_application_run (G_APPLICATION (app), argc, argv);
