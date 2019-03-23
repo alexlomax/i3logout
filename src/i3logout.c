@@ -195,9 +195,9 @@ static GOptionEntry entries[] = {
 };
 #endif
 
-char *default_config_path = NULL;
+char *path = NULL;
 static GOptionEntry entries[] = {
-  {"config", 'c', 0, G_OPTION_ARG_FILENAME, &default_config_path,
+  {"config", 'c', 0, G_OPTION_ARG_FILENAME, &path,
    "Path to config file",
    "PATH"},
   {NULL}
@@ -294,7 +294,6 @@ activate (GtkApplication * app, gpointer user_data)
 int
 main (int argc, char **argv)
 {
-  char *path = NULL;
   GtkApplication *app;
   GOptionContext *context;
   GError *error = NULL;
