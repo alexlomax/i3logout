@@ -25,11 +25,31 @@
 #define MAXLEN 100
 #define DELIM "="
 
+struct config
+{
+  char lock_command[MAXLEN];
+  char logout_command[MAXLEN];
+  char reboot_command[MAXLEN];
+  char suspend_command[MAXLEN];
+  char hibernate_command[MAXLEN];
+  char shutdown_command[MAXLEN];
+};
+
+/* Set default configuration file options */
+static struct config conf = {
+    .lock_command = COMMAND,
+    .logout_command = COMMAND,
+    .reboot_command = COMMAND,
+    .suspend_command = COMMAND,
+    .hibernate_command = COMMAND,
+    .shutdown_command = COMMAND
+  };
+
 /* TODO Create lock_action() */
 void
 lock_action (void)
 {
-  system ("echo '* Debug: lock_action ()'");
+  system (conf.lock_command);
 }
 
 /* TODO Create logout_action() */
@@ -67,32 +87,11 @@ shutdown_action (void)
   system ("echo '* Debug: shutdown_action ()'");
 }
 
-struct config
-{
-  char lock_command[MAXLEN];
-  char logout_command[MAXLEN];
-  char reboot_command[MAXLEN];
-  char suspend_command[MAXLEN];
-  char hibernate_command[MAXLEN];
-  char shutdown_command[MAXLEN];
-};
-
-void read_config (const char *value);
-
 void
-write_config (const char *value)
+write_config (char *path)
 {
-  /* Set default configuration file options */
-  struct config conf = {
-    .lock_command = COMMAND,
-    .logout_command = COMMAND,
-    .reboot_command = COMMAND,
-    .suspend_command = COMMAND,
-    .hibernate_command = COMMAND,
-    .shutdown_command = COMMAND
-  };
 
-  FILE *file = fopen (value, "w");
+  FILE *file = fopen (path, "w");
 
   fputs ("lock_command=", file);
   fputs (conf.lock_command, file);
@@ -119,22 +118,26 @@ write_config (const char *value)
 
   fclose (file);
 
-  read_config (value);
+  printf ("* Debug write_config (): lock_command: %s\n", conf.lock_command);
+  printf ("* Debug write_config (): logout_command: %s\n", conf.logout_command);
+  printf ("* Debug write_config (): reboot_command: %s\n", conf.reboot_command);
+  printf ("* Debug write_config (): suspend_command: %s\n", conf.suspend_command);
+  printf ("* Debug write_config (): hibernate_command: %s\n", conf.hibernate_command);
+  printf ("* Debug write_config (): shutdown_command: %s\n", conf.shutdown_command);
 }
 
 void
-read_config (const char *value)
+read_config (char *path)
 {
+  FILE *file = fopen (path, "r");
   char str[MAXLEN];
   int i = 0;
-  struct config conf;
-  FILE *file = fopen (value, "r");
 
   if (!file)
     {
       /* File not found! */
-      perror (value);
-      write_config (value);
+      perror (path);
+      write_config (path);
     }
   else
     {
@@ -160,40 +163,15 @@ read_config (const char *value)
 	  i++;
 	}
       fclose (file);
+
+      printf ("* Debug read_config (): lock_command: %s", conf.lock_command);
+      printf ("* Debug read_config (): logout_command: %s", conf.logout_command);
+      printf ("* Debug read_config (): reboot_command: %s", conf.reboot_command);
+      printf ("* Debug read_config (): suspend_command: %s", conf.suspend_command);
+      printf ("* Debug read_config (): hibernate_command: %s", conf.hibernate_command);
+      printf ("* Debug read_config (): shutdown_command: %s\n", conf.shutdown_command);
     }
-
-  printf ("* Debug: lock_command: %s", conf.lock_command);
-  printf ("* Debug: logout_command: %s", conf.logout_command);
-  printf ("* Debug: reboot_command: %s", conf.reboot_command);
-  printf ("* Debug: suspend_command: %s", conf.suspend_command);
-  printf ("* Debug: hibernate_command: %s", conf.hibernate_command);
-  printf ("* Debug: shutdown_command: %s", conf.shutdown_command);
 }
-
-gboolean
-parse (const char *key, const char *value, gpointer user_data,
-       GError ** error)
-{
-  printf ("* Debug: parse() %s, %s\n", key, value);
-  read_config (value);
-
-  return TRUE;
-}
-
-#if 0
-/*  const gchar *long_name
- *  gchar        short_name
- *  flags
- *  GOptionArg   arg
- *  gpointer     arg_data
- *  const gchar *description
- *  const gchar *arg_description
- */
-static GOptionEntry entries[] = {
-  {"config", 'c', 0, G_OPTION_ARG_CALLBACK, &parse, "Path to config file",
-   "PATH"}
-};
-#endif
 
 char *path = NULL;
 static GOptionEntry entries[] = {
@@ -224,7 +202,7 @@ activate (GtkApplication * app, gpointer user_data)
   button = gtk_button_new_from_icon_name ("system-lock-screen",
 					  GTK_ICON_SIZE_DIALOG);
   gtk_widget_set_tooltip_text (button, "Lock screen");
-  g_signal_connect (button, "clicked", G_CALLBACK (lock_action), NULL);
+  g_signal_connect (button, "clicked", G_CALLBACK (lock_action),  NULL);
 
   /* Place the first button in the grid cell (0, 0), and make it fill just 1
      cell horizontally and vertically (ie no spanning) */
@@ -288,7 +266,6 @@ activate (GtkApplication * app, gpointer user_data)
      gtk_widget_show() on all widgets that are contained in the window,
      directly or indirectly. */
   gtk_widget_show_all (window);
-
 }
 
 int
@@ -320,7 +297,9 @@ main (int argc, char **argv)
 				   of args is too few */
       path = getenv ("HOME");
       if (path != NULL)
+	{
 	strcat (path, "/.config/i3logout/config");
+	}
       else
 	{
 	  perror ("getenv");
@@ -329,6 +308,7 @@ main (int argc, char **argv)
     }
 
   printf ("* Debug: main () path: %s\n", path);
+  read_config(path);
 
   g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
   status = g_application_run (G_APPLICATION (app), argc, argv);
