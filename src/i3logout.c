@@ -37,13 +37,13 @@ struct config
 
 /* Set default configuration file options */
 static struct config conf = {
-    .lock_command = COMMAND,
-    .logout_command = COMMAND,
-    .reboot_command = COMMAND,
-    .suspend_command = COMMAND,
-    .hibernate_command = COMMAND,
-    .shutdown_command = COMMAND
-  };
+  .lock_command = COMMAND,
+  .logout_command = COMMAND,
+  .reboot_command = COMMAND,
+  .suspend_command = COMMAND,
+  .hibernate_command = COMMAND,
+  .shutdown_command = COMMAND
+};
 
 /* TODO Create lock_action() */
 void
@@ -118,12 +118,18 @@ write_config (char *path)
 
   fclose (file);
 
-  printf ("* Debug write_config (): lock_command: %s\n", conf.lock_command);
-  printf ("* Debug write_config (): logout_command: %s\n", conf.logout_command);
-  printf ("* Debug write_config (): reboot_command: %s\n", conf.reboot_command);
-  printf ("* Debug write_config (): suspend_command: %s\n", conf.suspend_command);
-  printf ("* Debug write_config (): hibernate_command: %s\n", conf.hibernate_command);
-  printf ("* Debug write_config (): shutdown_command: %s\n", conf.shutdown_command);
+  printf ("* Debug write_config (): lock_command: %s\n",
+	  conf.lock_command);
+  printf ("* Debug write_config (): logout_command: %s\n",
+	  conf.logout_command);
+  printf ("* Debug write_config (): reboot_command: %s\n",
+	  conf.reboot_command);
+  printf ("* Debug write_config (): suspend_command: %s\n",
+	  conf.suspend_command);
+  printf ("* Debug write_config (): hibernate_command: %s\n",
+	  conf.hibernate_command);
+  printf ("* Debug write_config (): shutdown_command: %s\n",
+	  conf.shutdown_command);
 }
 
 void
@@ -164,12 +170,18 @@ read_config (char *path)
 	}
       fclose (file);
 
-      printf ("* Debug read_config (): lock_command: %s", conf.lock_command);
-      printf ("* Debug read_config (): logout_command: %s", conf.logout_command);
-      printf ("* Debug read_config (): reboot_command: %s", conf.reboot_command);
-      printf ("* Debug read_config (): suspend_command: %s", conf.suspend_command);
-      printf ("* Debug read_config (): hibernate_command: %s", conf.hibernate_command);
-      printf ("* Debug read_config (): shutdown_command: %s\n", conf.shutdown_command);
+      printf ("* Debug read_config (): lock_command: %s",
+	      conf.lock_command);
+      printf ("* Debug read_config (): logout_command: %s",
+	      conf.logout_command);
+      printf ("* Debug read_config (): reboot_command: %s",
+	      conf.reboot_command);
+      printf ("* Debug read_config (): suspend_command: %s",
+	      conf.suspend_command);
+      printf ("* Debug read_config (): hibernate_command: %s",
+	      conf.hibernate_command);
+      printf ("* Debug read_config (): shutdown_command: %s\n",
+	      conf.shutdown_command);
     }
 }
 
@@ -202,7 +214,7 @@ activate (GtkApplication * app, gpointer user_data)
   button = gtk_button_new_from_icon_name ("system-lock-screen",
 					  GTK_ICON_SIZE_DIALOG);
   gtk_widget_set_tooltip_text (button, "Lock screen");
-  g_signal_connect (button, "clicked", G_CALLBACK (lock_action),  NULL);
+  g_signal_connect (button, "clicked", G_CALLBACK (lock_action), NULL);
 
   /* Place the first button in the grid cell (0, 0), and make it fill just 1
      cell horizontally and vertically (ie no spanning) */
@@ -298,7 +310,7 @@ main (int argc, char **argv)
       path = getenv ("HOME");
       if (path != NULL)
 	{
-	strcat (path, "/.config/i3logout/config");
+	  strcat (path, "/.config/i3logout/config");
 	}
       else
 	{
@@ -308,7 +320,7 @@ main (int argc, char **argv)
     }
 
   printf ("* Debug: main () path: %s\n", path);
-  read_config(path);
+  read_config (path);
 
   g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
   status = g_application_run (G_APPLICATION (app), argc, argv);
