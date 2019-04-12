@@ -14,10 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#define MAXLEN 100
 
 #ifndef SRC_CONFIG_H_
 #define SRC_CONFIG_H_
+
+#define MAXLEN 100
 
 extern struct config conf;
 
@@ -31,11 +32,8 @@ struct config
   char shutdown_command[MAXLEN];
 };
 
-void
-write_config (char *path);
+void write_config (char *path);
 
-void
-read_config (char *path);
-
+void read_config (char *path);
 
 #endif /* SRC_CONFIG_H_ */

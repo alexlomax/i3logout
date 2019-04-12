@@ -15,7 +15,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 #ifndef SRC_UI_H_
 #define SRC_UI_H_
 
@@ -23,8 +22,6 @@ char *path;
 
 GOptionEntry entries[];
 
-void
-activate (GtkApplication * app, gpointer user_data);
-
+void activate (GtkApplication * app, gpointer user_data);
 
 #endif /* SRC_UI_H_ */

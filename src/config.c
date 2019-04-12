@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include <stdio.h>
 
+#include <stdio.h>
 #include "config.h"
 
 /* TODO Remove this temporary constant */
@@ -117,8 +117,7 @@ read_config (char *path)
 	}
       fclose (file);
 
-      printf ("* Debug read_config (): lock_command: %s",
-	      conf.lock_command);
+      printf ("* Debug read_config (): lock_command: %s", conf.lock_command);
       printf ("* Debug read_config (): logout_command: %s",
 	      conf.logout_command);
       printf ("* Debug read_config (): reboot_command: %s",
@@ -131,5 +130,3 @@ read_config (char *path)
 	      conf.shutdown_command);
     }
 }
-
-

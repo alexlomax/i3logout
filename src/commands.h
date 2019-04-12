@@ -15,26 +15,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 #ifndef SRC_COMMANDS_H_
 #define SRC_COMMANDS_H_
 
-void
-lock_action (void);
+void lock_action (void);
 
-void
-logout_action (void);
+void logout_action (void);
 
-void
-reboot_action (void);
+void reboot_action (void);
 
-void
-suspend_action (void);
+void suspend_action (void);
 
-void
-hibernate_action (void);
+void hibernate_action (void);
 
-void
-shutdown_action (void);
+void shutdown_action (void);
 
 #endif /* SRC_COMMANDS_H_ */

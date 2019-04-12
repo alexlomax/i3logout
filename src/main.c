@@ -17,7 +17,6 @@
 
 #include <string.h>
 #include <gtk/gtk.h>
-
 #include "commands.h"
 #include "config.h"
 #include "ui.h"

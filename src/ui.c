@@ -16,7 +16,6 @@
  */
 
 #include <gtk/gtk.h>
-
 #include "commands.h"
 #include "ui.h"
 
@@ -114,4 +113,3 @@ activate (GtkApplication * app, gpointer user_data)
      directly or indirectly. */
   gtk_widget_show_all (window);
 }
-
