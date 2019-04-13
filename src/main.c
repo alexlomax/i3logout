@@ -17,54 +17,97 @@
 
 #include <string.h>
 #include <gtk/gtk.h>
+#include <getopt.h>
 #include "commands.h"
 #include "config.h"
 #include "ui.h"
+
+#define VERSION "v0.1.1"
+
+const char *config_filename = NULL;
+const char *program_name;
+
+/* Display information about the use of the program in STREAM
+ * (usually stdout or stderr) and exit with issuing the EXIT_CODE code.
+ * Return to main () function does not occur
+ */
+void
+print_usage (FILE * stream, int exit_code)
+{
+  fprintf (stream, "Usage: %s [options] <path>\n", program_name);
+  fprintf (stream, "  -c PATH --config=PATH  Path to configuration file\n"
+	           "  -v --version           Version of the program\n"
+	           "  -h --help              Display this usage information\n");
+  exit (exit_code);
+}
 
 int
 main (int argc, char **argv)
 {
   GtkApplication *app;
-  GOptionContext *context;
-  GError *error = NULL;
+  int next_option;
   int status;
-  int arg_count = argc;		/* We copy argc because
-				   g_option_context_parse () modifies it */
+
+  /* Short options */
+  const char *const short_options = "c:vh";
+  /* Long options */
+  const struct option long_options[] = {
+    {"help", 0, NULL, 'h'},
+    {"config", 1, NULL, 'c'},
+    {"version", 0, NULL, 'v'},
+    {NULL, 0, NULL, 0}
+  };
+
+  /* Remember the name of the program that will be included in the message */
+  program_name = argv[0];
+
+  do
+    {
+      next_option =
+	getopt_long (argc, argv, short_options, long_options, NULL);
+      switch (next_option)
+	{
+	case 'c':
+	  /* This option takes an argument - a path to configuration file */
+	  config_filename = optarg;
+	  /* TODO Add getenv () check */
+	  /* path = getenv ("HOME");
+	     if (path != NULL)
+	     {
+	     strcat (path, "/.config/i3logout/config");
+	     } */
+	  printf ("%s\n", config_filename);
+	  break;
+	case 'v':
+	  printf ("%s", VERSION);
+	  exit (0);
+	  break;
+	case 'h':
+	  /* The user has requested information about the use of the
+	   * program, you need to output it to the stdout stream and
+	   * exit with code 0 (normal termination)
+	   */
+	  print_usage (stdout, 0);
+	  break;
+	case '?':		/* User entered invalid option */
+	  /* Write information about the use of the program in the
+	   * stderr stream and exits with the issuance of the
+	   * code 1 (crash)
+	   */
+	  print_usage (stderr, 1);
+	  break;
+	case -1:		/* No more options */
+	  break;
+	default:		/* Some unexpected result */
+	  abort ();
+	}
+    }
+  while (next_option != -1);
 
   app = gtk_application_new ("com.yandex.alexlomax.i3logout",
 			     G_APPLICATION_FLAGS_NONE);
-
-  /* Create custom command-line options */
-  context = g_option_context_new ("- simple i3 logout dialog written "
-				  "in C and Gtk3");
-
-  g_option_context_add_main_entries (context, entries, NULL);
-  g_option_context_add_group (context, gtk_get_option_group (TRUE));
-  if (!g_option_context_parse (context, &argc, &argv, &error))
-    {
-      g_print ("option parsing failed: %s\n", error->message);
-      exit (1);
-    }
-  else if (arg_count < 3)
-    {				/* Set default config file path if the amount 
-				   of args is too few */
-      path = getenv ("HOME");
-      if (path != NULL)
-	{
-	  strcat (path, "/.config/i3logout/config");
-	}
-      else
-	{
-	  perror ("getenv");
-	  exit (1);
-	}
-    }
-
-  printf ("* Debug: main () path: %s\n", path);
-  read_config (path);
-
   g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
-  status = g_application_run (G_APPLICATION (app), argc, argv);
+  status = g_application_run (G_APPLICATION (app), 0, NULL);
   g_object_unref (app);
 
   return status;
