@@ -20,8 +20,6 @@
 
 char *path;
 
-GOptionEntry entries[];
-
 void activate (GtkApplication * app, gpointer user_data);
 
 #endif /* SRC_UI_H_ */

@@ -19,14 +19,6 @@
 #include "commands.h"
 #include "ui.h"
 
-char *path = NULL;
-GOptionEntry entries[] = {
-  {"config", 'c', 0, G_OPTION_ARG_FILENAME, &path,
-   "Path to config file",
-   "PATH"},
-  {NULL}
-};
-
 void
 activate (GtkApplication * app, gpointer user_data)
 {
