@@ -1,5 +1,5 @@
-/* i3logout
- * Copyright (C) 2019 Alexander Lomtev <alexlomax@yandex.com>
+/* i3logout - Simple i3 logout dialog written in C and Gtk3.
+ * Copyright (C) 2019 Alexander Lomtev <alexlomax@yandex.com>.
 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,15 +26,15 @@ activate (GtkApplication * app, gpointer user_data)
   GtkWidget *grid;
   GtkWidget *button;
 
-  /* create a new window, and set its title */
+  /* create a new window, and set its title. */
   window = gtk_application_window_new (app);
   gtk_window_set_title (GTK_WINDOW (window), "Choose action...");
   gtk_container_set_border_width (GTK_CONTAINER (window), 10);
 
-  /* Here we construct the container that is going pack our buttons */
+  /* Here we construct the container that is going pack our buttons. */
   grid = gtk_grid_new ();
 
-  /* Pack the container in the window */
+  /* Pack the container in the window. */
   gtk_container_add (GTK_CONTAINER (window), grid);
 
   button = gtk_button_new_from_icon_name ("system-lock-screen",
@@ -43,7 +43,8 @@ activate (GtkApplication * app, gpointer user_data)
   g_signal_connect (button, "clicked", G_CALLBACK (lock_action), NULL);
 
   /* Place the first button in the grid cell (0, 0), and make it fill just 1
-     cell horizontally and vertically (ie no spanning) */
+   * cell horizontally and vertically (ie no spanning).
+   */
   gtk_grid_attach (GTK_GRID (grid), button, 0, 0, 1, 1);
 
   button = gtk_button_new_from_icon_name ("system-log-out",
@@ -52,7 +53,8 @@ activate (GtkApplication * app, gpointer user_data)
   g_signal_connect (button, "clicked", G_CALLBACK (logout_action), NULL);
 
   /* Place the second button in the grid cell (1, 0), and make it fill just 1
-     cell horizontally and vertically (ie no spanning) */
+   * cell horizontally and vertically (ie no spanning).
+   */
   gtk_grid_attach (GTK_GRID (grid), button, 1, 0, 1, 1);
 
   button = gtk_button_new_from_icon_name ("system-reboot",
@@ -61,7 +63,8 @@ activate (GtkApplication * app, gpointer user_data)
   g_signal_connect (button, "clicked", G_CALLBACK (reboot_action), NULL);
 
   /* Place the third button in the grid cell (2, 0), and make it fill just 1
-     cell horizontally and vertically (ie no spanning) */
+   * cell horizontally and vertically (ie no spanning).
+   */
   gtk_grid_attach (GTK_GRID (grid), button, 2, 0, 1, 1);
 
   button = gtk_button_new_from_icon_name ("system-suspend",
@@ -70,7 +73,8 @@ activate (GtkApplication * app, gpointer user_data)
   g_signal_connect (button, "clicked", G_CALLBACK (suspend_action), NULL);
 
   /* Place the fourth button in the grid cell (3, 0), and make it fill just 1
-     cell horizontally and vertically (ie no spanning) */
+   * cell horizontally and vertically (ie no spanning).
+   */
   gtk_grid_attach (GTK_GRID (grid), button, 3, 0, 1, 1);
 
   button = gtk_button_new_from_icon_name ("system-hibernate",
@@ -79,7 +83,8 @@ activate (GtkApplication * app, gpointer user_data)
   g_signal_connect (button, "clicked", G_CALLBACK (hibernate_action), NULL);
 
   /* Place the fifth button in the grid cell (4, 0), and make it fill just 1
-     cell horizontally and vertically (ie no spanning) */
+   * cell horizontally and vertically (ie no spanning).
+   */
   gtk_grid_attach (GTK_GRID (grid), button, 4, 0, 1, 1);
 
   button = gtk_button_new_from_icon_name ("system-shutdown",
@@ -88,7 +93,8 @@ activate (GtkApplication * app, gpointer user_data)
   g_signal_connect (button, "clicked", G_CALLBACK (shutdown_action), NULL);
 
   /* Place the sixth button in the grid cell (5, 0), and make it fill just 1
-     cell horizontally and vertically (ie no spanning) */
+   * cell horizontally and vertically (ie no spanning).
+   */
   gtk_grid_attach (GTK_GRID (grid), button, 5, 0, 1, 1);
 
   button = gtk_button_new_with_label ("Quit");
@@ -96,12 +102,14 @@ activate (GtkApplication * app, gpointer user_data)
 			    G_CALLBACK (gtk_widget_destroy), window);
 
   /* Place the Quit button in the grid cell (5, 1), and make it span 1
-     columns. */
+   * columns.
+   */
   gtk_grid_attach (GTK_GRID (grid), button, 5, 1, 1, 1);
 
   /* Now that we are done packing our widgets, we show them all in one go, by
-     calling gtk_widget_show_all() on the window. This call recursively calls
-     gtk_widget_show() on all widgets that are contained in the window,
-     directly or indirectly. */
+   * calling gtk_widget_show_all() on the window. This call recursively calls
+   * gtk_widget_show() on all widgets that are contained in the window,
+   * directly or indirectly.
+   */
   gtk_widget_show_all (window);
 }

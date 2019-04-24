@@ -1,5 +1,5 @@
-/* i3logout - Simple i3 logout dialog written in C and Gtk3
- * Copyright (C) 2019 Alexander Lomtev <alexlomax@yandex.com>
+/* i3logout - Simple i3 logout dialog written in C and Gtk3.
+ * Copyright (C) 2019 Alexander Lomtev <alexlomax@yandex.com>.
 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ const char *program_name;
 
 /* Display information about the use of the program in STREAM
  * (usually stdout or stderr) and exit with issuing the EXIT_CODE code.
- * Return to main () function does not occur
+ * Return to main () function does not occur.
  */
 void
 print_usage (FILE * stream, int exit_code)
@@ -41,11 +41,7 @@ print_usage (FILE * stream, int exit_code)
   exit (exit_code);
 }
 
-void hello (char *path)
-{
-  if (path == NULL)
-    printf ("NULL");
-}
+
 
 int
 main (int argc, char **argv)
@@ -54,9 +50,9 @@ main (int argc, char **argv)
   int next_option;
   int status;
 
-  /* Short options */
+  /* Short options. */
   const char *const short_options = "c:vh";
-  /* Long options */
+  /* Long options. */
   const struct option long_options[] = {
     {"help", 0, NULL, 'h'},
     {"config", 1, NULL, 'c'},
@@ -64,7 +60,7 @@ main (int argc, char **argv)
     {NULL, 0, NULL, 0}
   };
 
-  /* Remember the name of the program that will be included in the message */
+  /* Remember the name of the program that will be included in the message. */
   program_name = argv[0];
 
   do
@@ -74,7 +70,7 @@ main (int argc, char **argv)
       switch (next_option)
 	{
 	case 'c':
-	  /* This option takes an argument - a path to configuration file */
+	  /* This option takes an argument - a path to configuration file. */
 	  path = optarg;
 	  printf ("* Debug main.c path: %s\n", path);
           parse_config(path);
@@ -86,20 +82,20 @@ main (int argc, char **argv)
 	case 'h':
 	  /* The user has requested information about the use of the
 	   * program, you need to output it to the stdout stream and
-	   * exit with code 0 (normal termination)
+	   * exit with code 0 (normal termination).
 	   */
 	  print_usage (stdout, 0);
 	  break;
-	case '?':		/* User entered invalid option */
+	case '?':		/* User entered invalid option. */
 	  /* Write information about the use of the program in the
 	   * stderr stream and exits with the issuance of the
-	   * code 1 (crash)
+	   * code 1 (crash).
 	   */
 	  print_usage (stderr, 1);
 	  break;
-	case -1:		/* No more options */
+	case -1:		/* No more options. */
 	  break;
-	default:		/* Some unexpected result */
+	default:		/* Some unexpected result. */
 	  abort ();
 	}
     }

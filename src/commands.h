@@ -1,5 +1,5 @@
-/* i3logout
- * Copyright (C) 2019 Alexander Lomtev <alexlomax@yandex.com>
+/* i3logout - Simple i3 logout dialog written in C and Gtk3.
+ * Copyright (C) 2019 Alexander Lomtev <alexlomax@yandex.com>.
 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

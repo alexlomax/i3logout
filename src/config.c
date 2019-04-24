@@ -1,5 +1,5 @@
-/* i3logout
- * Copyright (C) 2019 Alexander Lomtev <alexlomax@yandex.com>
+/* i3logout - Simple i3 logout dialog written in C and Gtk3.
+ * Copyright (C) 2019 Alexander Lomtev <alexlomax@yandex.com>.
 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,11 +48,11 @@ parse_config (char *path)
   const char *value;
 
   /* If the program is started without the -c option, set the default path to
-   * the configuration file
+   * the configuration file.
    */
   if (path == NULL)
     {
-      /* Using the XDG configuration specification */
+      /* Using the XDG configuration specification. */
       path = "/etc/xdg/i3logout/i3logout.conf";
     }
 
@@ -60,7 +60,7 @@ parse_config (char *path)
 
   printf ("* Debug config.c path: %s\n", path);
 
-  /* Read the file. If there is an error, report it and exit */
+  /* Read the file. If there is an error, report it and exit. */
   if (!config_read_file (&cfg, path))
     {
       fprintf (stderr, "%s:%d - %s\n", config_error_file (&cfg),

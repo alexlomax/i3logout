@@ -1,5 +1,5 @@
-/* i3logout
- * Copyright (C) 2019 Alexander Lomtev <alexlomax@yandex.com>
+/* i3logout - Simple i3 logout dialog written in C and Gtk3.
+ * Copyright (C) 2019 Alexander Lomtev <alexlomax@yandex.com>.
 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include "commands.h"
 #include "config.h"
 
-/* TODO Create lock_action() */
+/* TODO Create lock_action(). */
 void
 lock_action (void)
 {
@@ -28,35 +28,35 @@ lock_action (void)
   system (lock_cmd);
 }
 
-/* TODO Create logout_action() */
+/* TODO Create logout_action(). */
 void
 logout_action (void)
 {
   system ("echo '* Debug: logout_action ()'");
 }
 
-/* TODO Create reboot_action() */
+/* TODO Create reboot_action(). */
 void
 reboot_action (void)
 {
   system ("echo '* Debug: reboot_action ()'");
 }
 
-/* TODO Create suspend_action() */
+/* TODO Create suspend_action(). */
 void
 suspend_action (void)
 {
   system ("echo '* Debug: suspend_action()'");
 }
 
-/* TODO Create hibernate_action() */
+/* TODO Create hibernate_action(). */
 void
 hibernate_action (void)
 {
   system ("echo '* Debug: hibernate_action ()'");
 }
 
-/* TODO Create shutdown_action() */
+/* TODO Create shutdown_action(). */
 void
 shutdown_action (void)
 {
