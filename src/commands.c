@@ -15,6 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <stdio.h>
+#include <stdlib.h>
 #include "commands.h"
 #include "config.h"
 
@@ -22,7 +24,8 @@
 void
 lock_action (void)
 {
-  system (conf.lock_command);
+  printf ("* Debug lock_action (): %s\n", lock_cmd);
+  system (lock_cmd);
 }
 
 /* TODO Create logout_action() */

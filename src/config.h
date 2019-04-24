@@ -18,22 +18,17 @@
 #ifndef SRC_CONFIG_H_
 #define SRC_CONFIG_H_
 
-#define MAXLEN 100
+extern char *path;
 
-extern struct config conf;
+extern char *lock_cmd;
+extern char *logout_cmd;
+extern char *reboot_cmd;
+extern char *suspend_cmd;
+extern char *hibernate_cmd;
+extern char *shutdown_cmd;
 
-struct config
-{
-  char lock_command[MAXLEN];
-  char logout_command[MAXLEN];
-  char reboot_command[MAXLEN];
-  char suspend_command[MAXLEN];
-  char hibernate_command[MAXLEN];
-  char shutdown_command[MAXLEN];
-};
+void cleanup_config (void);
 
-void write_config (char *path);
-
-void read_config (char *path);
+int parse_config (char *path);
 
 #endif /* SRC_CONFIG_H_ */

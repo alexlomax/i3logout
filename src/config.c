@@ -15,118 +15,71 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <libconfig.h>
+#include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "config.h"
 
-/* TODO Remove this temporary constant */
-#define COMMAND "uname -a"
+char *path = NULL;
 
-#define MAXLEN 100
-#define DELIM "="
-
-/* Set default configuration file options */
-struct config conf = {
-  .lock_command = COMMAND,
-  .logout_command = COMMAND,
-  .reboot_command = COMMAND,
-  .suspend_command = COMMAND,
-  .hibernate_command = COMMAND,
-  .shutdown_command = COMMAND
-};
+char *lock_cmd;
+char *logout_cmd;
+char *reboot_cmd;
+char *suspend_cmd;
+char *hibernate_cmd;
+char *shutdown_cmd;
 
 void
-write_config (char *path)
+cleanup_config (void)
 {
-
-  FILE *file = fopen (path, "w");
-
-  fputs ("lock_command=", file);
-  fputs (conf.lock_command, file);
-  fputs ("\n", file);
-
-  fputs ("logout_command=", file);
-  fputs (conf.logout_command, file);
-  fputs ("\n", file);
-
-  fputs ("reboot_command=", file);
-  fputs (conf.reboot_command, file);
-  fputs ("\n", file);
-
-  fputs ("suspend_command=", file);
-  fputs (conf.suspend_command, file);
-  fputs ("\n", file);
-
-  fputs ("hibernate_command=", file);
-  fputs (conf.hibernate_command, file);
-  fputs ("\n", file);
-
-  fputs ("shutdown_command=", file);
-  fputs (conf.shutdown_command, file);
-
-  fclose (file);
-
-  printf ("* Debug write_config (): lock_command: %s\n",
-	  conf.lock_command);
-  printf ("* Debug write_config (): logout_command: %s\n",
-	  conf.logout_command);
-  printf ("* Debug write_config (): reboot_command: %s\n",
-	  conf.reboot_command);
-  printf ("* Debug write_config (): suspend_command: %s\n",
-	  conf.suspend_command);
-  printf ("* Debug write_config (): hibernate_command: %s\n",
-	  conf.hibernate_command);
-  printf ("* Debug write_config (): shutdown_command: %s\n",
-	  conf.shutdown_command);
+  free (lock_cmd);
+  free (logout_cmd);
+  free (reboot_cmd);
+  free (suspend_cmd);
+  free (hibernate_cmd);
+  free (shutdown_cmd);
 }
 
-void
-read_config (char *path)
+int
+parse_config (char *path)
 {
-  FILE *file = fopen (path, "r");
-  char str[MAXLEN];
-  int i = 0;
+  config_t cfg;
+  const char *value;
 
-  if (!file)
+  /* If the program is started without the -c option, set the default path to
+   * the configuration file
+   */
+  if (path == NULL)
     {
-      /* File not found! */
-      perror (path);
-      write_config (path);
+      /* Using the XDG configuration specification */
+      path = "/etc/xdg/i3logout/i3logout.conf";
     }
-  else
+
+  config_init (&cfg);
+
+  printf ("* Debug config.c path: %s\n", path);
+
+  /* Read the file. If there is an error, report it and exit */
+  if (!config_read_file (&cfg, path))
     {
-
-      while (fgets (str, MAXLEN, file) != NULL)
-	{
-	  char *line;
-	  line = strstr (str, DELIM);
-	  line = line + strlen (DELIM);
-
-	  if (i == 0)
-	    strcpy (conf.lock_command, line);
-	  else if (i == 1)
-	    strcpy (conf.logout_command, line);
-	  else if (i == 2)
-	    strcpy (conf.reboot_command, line);
-	  else if (i == 3)
-	    strcpy (conf.suspend_command, line);
-	  else if (i == 4)
-	    strcpy (conf.hibernate_command, line);
-	  else if (i == 5)
-	    strcpy (conf.shutdown_command, line);
-	  i++;
-	}
-      fclose (file);
-
-      printf ("* Debug read_config (): lock_command: %s", conf.lock_command);
-      printf ("* Debug read_config (): logout_command: %s",
-	      conf.logout_command);
-      printf ("* Debug read_config (): reboot_command: %s",
-	      conf.reboot_command);
-      printf ("* Debug read_config (): suspend_command: %s",
-	      conf.suspend_command);
-      printf ("* Debug read_config (): hibernate_command: %s",
-	      conf.hibernate_command);
-      printf ("* Debug read_config (): shutdown_command: %s\n",
-	      conf.shutdown_command);
+      fprintf (stderr, "%s:%d - %s\n", config_error_file (&cfg),
+	       config_error_line (&cfg), config_error_text (&cfg));
+      config_destroy (&cfg);
+      return (EXIT_FAILURE);
     }
+
+  if (config_lookup_string (&cfg, "commands.lock", &value))
+    {
+      lock_cmd = malloc (strlen (value) + 1);
+      strcpy (lock_cmd, value);
+    }
+  if (config_lookup_string (&cfg, "commands.logout", &value))
+    {
+      logout_cmd = malloc (strlen (value) + 1);
+      strcpy (logout_cmd, value);
+    }
+
+  config_destroy (&cfg);
+  return (EXIT_SUCCESS);
 }

@@ -15,7 +15,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
 #include <gtk/gtk.h>
 #include <getopt.h>
 #include "commands.h"
@@ -24,7 +23,6 @@
 
 #define VERSION "v0.1.1"
 
-const char *config_filename = NULL;
 const char *program_name;
 
 /* Display information about the use of the program in STREAM
@@ -34,11 +32,19 @@ const char *program_name;
 void
 print_usage (FILE * stream, int exit_code)
 {
+/* *INDENT-OFF* */
   fprintf (stream, "Usage: %s [options] <path>\n", program_name);
   fprintf (stream, "  -c PATH --config=PATH  Path to configuration file\n"
 	           "  -v --version           Version of the program\n"
 	           "  -h --help              Display this usage information\n");
+/* *INDENT-ON* */
   exit (exit_code);
+}
+
+void hello (char *path)
+{
+  if (path == NULL)
+    printf ("NULL");
 }
 
 int
@@ -69,17 +75,12 @@ main (int argc, char **argv)
 	{
 	case 'c':
 	  /* This option takes an argument - a path to configuration file */
-	  config_filename = optarg;
-	  /* TODO Add getenv () check */
-	  /* path = getenv ("HOME");
-	     if (path != NULL)
-	     {
-	     strcat (path, "/.config/i3logout/config");
-	     } */
-	  printf ("%s\n", config_filename);
+	  path = optarg;
+	  printf ("* Debug main.c path: %s\n", path);
+          parse_config(path);
 	  break;
 	case 'v':
-	  printf ("%s", VERSION);
+	  printf ("%s\n", VERSION);
 	  exit (0);
 	  break;
 	case 'h':
@@ -104,11 +105,16 @@ main (int argc, char **argv)
     }
   while (next_option != -1);
 
+  printf ("* Debug main.c path: %s\n", path);
+  parse_config(path);
+
   app = gtk_application_new ("com.yandex.alexlomax.i3logout",
-			     G_APPLICATION_FLAGS_NONE);
+  			     G_APPLICATION_FLAGS_NONE);
   g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
   status = g_application_run (G_APPLICATION (app), 0, NULL);
+
   g_object_unref (app);
+  cleanup_config();
 
   return status;
 }

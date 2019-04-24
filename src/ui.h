@@ -18,8 +18,6 @@
 #ifndef SRC_UI_H_
 #define SRC_UI_H_
 
-char *path;
-
 void activate (GtkApplication * app, gpointer user_data);
 
 #endif /* SRC_UI_H_ */
