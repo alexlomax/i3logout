@@ -15,9 +15,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "commands.h"
+
 #include <stdio.h>
 #include <stdlib.h>
-#include "commands.h"
+
 #include "config.h"
 
 /* TODO Create lock_action(). */

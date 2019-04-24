@@ -15,9 +15,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
-#include "commands.h"
 #include "ui.h"
+
+#include <gtk/gtk.h>
+
+#include "commands.h"
 
 void
 activate (GtkApplication * app, gpointer user_data)

@@ -15,11 +15,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "config.h"
+
 #include <libconfig.h>
-#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "config.h"
+#include <string.h>
 
 char *path = NULL;
 

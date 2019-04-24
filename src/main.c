@@ -15,9 +15,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
 #include <getopt.h>
-#include "commands.h"
+#include <gtk/gtk.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "config.h"
 #include "ui.h"
 
@@ -40,8 +42,6 @@ print_usage (FILE * stream, int exit_code)
 /* *INDENT-ON* */
   exit (exit_code);
 }
-
-
 
 int
 main (int argc, char **argv)
