@@ -51,7 +51,7 @@ main (int argc, char **argv)
   int status;
 
   /* Short options. */
-  const char *const short_options = "c:vh";
+  const char *const short_options = "hc:v";
   /* Long options. */
   const struct option long_options[] = {
     {"help", 0, NULL, 'h'},
