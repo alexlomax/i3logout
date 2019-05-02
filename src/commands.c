@@ -26,8 +26,8 @@
 void
 lock_action (void)
 {
-  printf ("* Debug lock_action (): %s\n", lock_cmd);
-  system (lock_cmd);
+  printf ("* Debug lock_action (): %s\n", commands.lock);
+  system (commands.lock);
 }
 
 /* TODO Create logout_action(). */

@@ -20,12 +20,18 @@
 
 extern char *path;
 
-extern char *lock_cmd;
-extern char *logout_cmd;
-extern char *reboot_cmd;
-extern char *suspend_cmd;
-extern char *hibernate_cmd;
-extern char *shutdown_cmd;
+/* A structure representing commands configuration */
+typedef struct
+{
+  char *lock;
+  char *logout;
+  char *reboot;
+  char *suspend;
+  char *hibernate;
+  char *shutdown;
+} commands_t;
+
+commands_t commands;
 
 void cleanup_config (void);
 

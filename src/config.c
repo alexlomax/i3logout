@@ -34,12 +34,12 @@ char *shutdown_cmd;
 void
 cleanup_config (void)
 {
-  free (lock_cmd);
-  free (logout_cmd);
-  free (reboot_cmd);
-  free (suspend_cmd);
-  free (hibernate_cmd);
-  free (shutdown_cmd);
+  free (commands.lock);
+  free (commands.logout);
+  free (commands.reboot);
+  free (commands.suspend);
+  free (commands.hibernate);
+  free (commands.shutdown);
 }
 
 int
@@ -70,16 +70,37 @@ parse_config (char *path)
       return (EXIT_FAILURE);
     }
 
+  /* Filling up the commands configuration structure */
   if (config_lookup_string (&cfg, "commands.lock", &value))
     {
-      lock_cmd = malloc (strlen (value) + 1);
-      strcpy (lock_cmd, value);
+      commands.lock = malloc (strlen (value) + 1);
+      strcpy (commands.lock, value);
     }
-  if (config_lookup_string (&cfg, "commands.logout", &value))
+  else if (config_lookup_string (&cfg, "commands.logout", &value))
     {
-      logout_cmd = malloc (strlen (value) + 1);
-      strcpy (logout_cmd, value);
+      commands.logout = malloc (strlen (value) + 1);
+      strcpy (commands.logout, value);
     }
+  else if (config_lookup_string (&cfg, "commands.reboot", &value))
+      {
+        commands.reboot = malloc (strlen (value) + 1);
+        strcpy (commands.reboot, value);
+      }
+  else if (config_lookup_string (&cfg, "commands.suspend", &value))
+      {
+        commands.suspend = malloc (strlen (value) + 1);
+        strcpy (commands.suspend, value);
+      }
+  else if (config_lookup_string (&cfg, "commands.hibernate", &value))
+      {
+        commands.hibernate = malloc (strlen (value) + 1);
+        strcpy (commands.hibernate, value);
+      }
+  else if (config_lookup_string (&cfg, "commands.shutdown", &value))
+      {
+        commands.shutdown = malloc (strlen (value) + 1);
+        strcpy (commands.shutdown, value);
+      }
 
   config_destroy (&cfg);
   return (EXIT_SUCCESS);
