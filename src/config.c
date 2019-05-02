@@ -24,13 +24,6 @@
 
 char *path = NULL;
 
-char *lock_cmd;
-char *logout_cmd;
-char *reboot_cmd;
-char *suspend_cmd;
-char *hibernate_cmd;
-char *shutdown_cmd;
-
 void
 cleanup_config (void)
 {
